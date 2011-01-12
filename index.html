@@ -1,0 +1,123 @@
+<!doctype html>  
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>/video/sound/machine</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Place favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-startup-image" href="startup.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  
+  <!-- google font directoy -->
+  <link href='http://fonts.googleapis.com/css?family=Arvo:regular,bold&subset=latin' rel='stylesheet' type='text/css'>
+  
+  <!--  Mobile viewports configuration (http://matt.might.net/articles/how-to-native-iphone-ipad-apps-in-javascript/) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="user-scalable=no, width=device-width">
+  
+  
+  <!-- CSS : implied media="all" -->
+  <link rel="stylesheet" href="css/style.css?v=2">
+
+  <!-- Uncomment if you are specifically targeting less enabled mobile browsers
+  <link rel="stylesheet" media="handheld" href="css/handheld.css?v=2">  -->
+ 
+  <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+  <script src="js/libs/modernizr-1.6.min.js"></script>
+
+</head>
+
+<body ontouchmove="BlockMove(event);">
+
+
+	<div id="container">
+	<header>
+		<h1>/video<br />/sound<br />/machine</h1>
+	</header>
+	
+	<div id="controler">
+		<a id="playercontrol" class="button greenPulsate" href="#">&nbsp;</a>
+		<a id="beat_up" class="button greenPulsate" href="#">+</a>
+		<span id="beat_speed">beat</span>
+		<a id="beat_down" class="button greenPulsate" href="#">-</a>
+	</div>
+
+	<div id="playfield">
+	</div>
+	
+	<div id="videolayer">
+		<video class="v1" width="640" height="360" preload controls><source src="video/CIMG0370.mp4" type="video/mp4"></video>
+		<video class="v2" width="640" height="360" preload controls><source src="video/CIMG5413.mp4" type="video/mp4"></video>
+		<video class="v3" width="640" height="360" preload controls><source src="video/CIMG5599.mp4" type="video/mp4"></video>
+		<video class="v4" width="640" height="360" preload controls><source src="video/CIMG5761.mp4" type="video/mp4"></video>
+		<video class="v5" width="640" height="360" preload controls><source src="video/CIMG5986.mp4" type="video/mp4"></video>
+	</div>
+
+
+	<footer>
+		/video/sound/machine &mdash; Johannes Henseler &mdash; 101215_04
+<!--		<img id="chromebadge" src="images/chrome_badge.png" /> -->
+	</footer>
+	
+	</div> <!--! end of #container -->
+
+
+
+  <!-- Javascript at the bottom for fast page loading -->
+
+  <!-- local jquery because googles CDN seems not to be available today (101104) -->
+  <script src="js/libs/jquery-1.4.4.min.js"></script>
+  <script src="js/libs/jquery-ui-1.8.7.custom.min.js"></script>
+  
+  
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="js/plugins.js"></script>
+  <script src="js/mylibs/jquery.ba-dotimeout.min.js"></script>
+  <script src="js/script.js"></script>
+  <!-- end concatenated and minified scripts-->
+  
+  <!--[if lt IE 7 ]>
+j  
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
+  <![endif]-->
+
+  <!-- no elastic scrolling -->
+  <script>
+	 function BlockMove(event) {
+	  // Tell Safari not to move the window.
+	  event.preventDefault() ;
+	 }
+  </script>
+
+  <!-- asynchronous google analytics: mathiasbynens.be/notes/async-analytics-snippet 
+       change the UA-XXXXX-X to be your site's ID -->
+  <script>
+   var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
+   (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.async = true;
+    g.src = ('https:' == location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g, s);
+   })(document, 'script');
+  </script>
+
+  
+</body>
+</html>

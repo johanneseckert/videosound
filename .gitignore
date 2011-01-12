@@ -1,0 +1,8 @@
+.svn/
+publish/
+build/buildinfo.properties
+.DS_Store
+Thumbs.db
+
+/_layout
+/_screencasts
