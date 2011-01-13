@@ -30,7 +30,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="user-scalable=no, width=device-width">
   
-  
   <!-- CSS : implied media="all" -->
   <link rel="stylesheet" href="css/style.css?v=2">
 
@@ -42,8 +41,7 @@
 
 </head>
 
-<body ontouchmove="BlockMove(event);">
-
+<body>
 
 	<div id="container">
 	<header>
@@ -57,7 +55,11 @@
 		<a id="beat_down" class="button greenPulsate" href="#">-</a>
 	</div>
 
-	<div id="playfield">
+	<div id="timeline">
+		<div id="playfield">
+		<canvas id="canvas" width="930" height="120">
+		</canvas>
+		</div>
 	</div>
 	
 	<div id="videolayer">
@@ -70,12 +72,11 @@
 
 
 	<footer>
-		/video/sound/machine &mdash; Johannes Henseler &mdash; 101215_04
+		/video/sound/machine &mdash; Johannes Henseler &mdash; 110113_05
 <!--		<img id="chromebadge" src="images/chrome_badge.png" /> -->
 	</footer>
 	
 	</div> <!--! end of #container -->
-
 
 
   <!-- Javascript at the bottom for fast page loading -->
@@ -84,7 +85,6 @@
   <script src="js/libs/jquery-1.4.4.min.js"></script>
   <script src="js/libs/jquery-ui-1.8.7.custom.min.js"></script>
   
-  
   <!-- scripts concatenated and minified via ant build script-->
   <script src="js/plugins.js"></script>
   <script src="js/mylibs/jquery.ba-dotimeout.min.js"></script>
@@ -92,21 +92,10 @@
   <!-- end concatenated and minified scripts-->
   
   <!--[if lt IE 7 ]>
-j  
     <script src="js/libs/dd_belatedpng.js"></script>
     <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
   <![endif]-->
 
-  <!-- no elastic scrolling -->
-  <script>
-	 function BlockMove(event) {
-	  // Tell Safari not to move the window.
-	  event.preventDefault() ;
-	 }
-  </script>
-
-  <!-- asynchronous google analytics: mathiasbynens.be/notes/async-analytics-snippet 
-       change the UA-XXXXX-X to be your site's ID -->
   <script>
    var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
    (function(d, t) {
@@ -117,7 +106,5 @@ j
     s.parentNode.insertBefore(g, s);
    })(document, 'script');
   </script>
-
-  
 </body>
 </html>

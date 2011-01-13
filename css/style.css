@@ -275,11 +275,19 @@ hr {
 	border-top: 1px solid #f12e58;
 }
 
-#playfield {
+#timeline {
 	width: 930px;
 	height: 120px;
 	margin-top: 400px;
+}
+
+#playfield {
+	width: 930px;
+	height: 120px;
 	background: url(../images/timeline.png) center no-repeat;
+}
+
+#canvas {
 }
 
 #videolayer {

@@ -2,7 +2,7 @@
 	Johannes Henseler
 	nordsueddesign.de
 	
-	101202_03
+	110113_05
 */
 
 //
@@ -10,117 +10,99 @@
 // INIT
 //
 //
-var isplaying = false;
-var beat = 250;
-
 $("video").hide();
 $("#videolayer").hide();
 $("video").removeAttr("controls");
 
-
-//
-//
-// CONFIGURATOR
-//
-//
-$("#beat_speed").text(beat);
-
-// slow down
-$("#beat_up").click(function(){
-	beat = beat+100;
-	$("#beat_speed").text(beat);
-	log("new beat: "+beat);
-});
-
-// speed up
-$("#beat_down").click(function(){
-	if ((beat-100) > 0) {
-		beat = beat-100;
-		$("#beat_speed").text(beat);
-		log("new beat: "+beat);
-	}
-});
+var vsm = new videosoundmachine();
+var canvas = new canvastool();
 
 
 //
 //
-// PLAYFIELD
+//
+// OOP here
+// http://articles.sitepoint.com/article/oriented-programming-2
 //
 //
-$("#playfield").click(function(e){
-	// but NOT if clicked on trigger element
-	if (!$(e.target).is(".trigger")) {
-	
-	// how many triggers are there (already)?
-	var trigger_count = $(".trigger").length;
-	
-	// calculate the mouse-click for absolute positioning the trigger element
-	var mouse_x = e.pageX;
-	var mouse_y = e.pageY;
-	
-	// calculate the sector the trigger is in for video and coloring
-	var mouse_xrel = e.pageX - this.offsetLeft;
-	var mouse_yrel = e.pageY - this.offsetTop;
-	var box_height = $(this).height();
-	var num_videos = 5;
-	var sector_height = box_height / num_videos;
-	
+//
+
+// the dot-Object is the circle that represents a video
+function dot(x,y) {
+	this.position = new Object();
+	this.position.x = x;
+	this.position.y = y;
+
+	// calculate the sector the dot is in
+	var playfield = $("#playfield");
+	var mouse_xrel = this.position.x - playfield.offset().left;
+	var mouse_yrel = this.position.y - playfield.offset().top;
+	var box_height = playfield.height();
+	var sector_height = box_height / vsm.num_videos;
 	var sector = Math.floor(mouse_yrel / sector_height)+1;
-	
-	// append new trigger object
+
+	// append dot to DOM
 	// -12px are for centered circles with 25px durchmesser
 	$("#playfield").append(
-		'<div class="trigger trigger'+trigger_count+' video'+sector+' sector'+sector+'" rel="v'+sector+
-		'" style="top: '+(mouse_y-12)+'px; left: '+(mouse_x-12)+'px"></div>\n');
-	log("trigger"+(trigger_count) + " created in sector "+sector+" at "+mouse_yrel);
+		'<div class="trigger trigger'+vsm.dots.length+' video'+sector+' sector'+sector+'" rel="v'+sector+
+		'" style="top: '+(this.position.y-12)+'px; left: '+(this.position.x-12)+'px"></div>\n');
+	log("trigger"+(vsm.dots.length) + " created in sector "+sector+" at x="+mouse_xrel+", y="+mouse_yrel);
 	
-	}
-	
-	// define it as draggable
-	$(".trigger"+trigger_count).draggable({ 
+	// define dot as draggable
+	$(".trigger"+vsm.dots.length).draggable({ 
 		containment: 'parent',
 		stack: ".trigger",
 		opacity: 0.75,
 		start: function(event, ui) { 
-//			ui.helper.toggleClass("dragging");
 		},
 		stop: function(event, ui) { 
-//			ui.helper.toggleClass("dragging");
-			
 			// need to manually calc pos because ui.position.left does not work relative
 			dropped_top = ui.position.top+12-$('#playfield').offset().top;
 			dropped_left = ui.position.left-$('#playfield').offset().left;
 			var new_sector = Math.floor(dropped_top / sector_height)+1;
-			log("trigger"+trigger_count+" dropped in sector "+new_sector+" at "+dropped_top);
-			ui.helper.attr('class','trigger trigger'+trigger_count+' video'+new_sector+' sector'+new_sector+'');
+			log("trigger"+vsm.dots.length+" dropped in sector "+new_sector+" at x="+dropped_top+", y="+dropped_left);
+			ui.helper.attr('class','trigger trigger'+vsm.dots.length+' video'+new_sector+' sector'+new_sector+'');
 			ui.helper.attr('rel','v'+new_sector);
+			
+//			canvas.draw();
 		}
 	});
-});
+	
+	// evoke draw on canvas
+//	canvas.draw();
+}
 
-$(".trigger").dblclick(function() {
-	log("trying to remove trigger");
-	$(this).remove();
-});	
+// the machine object handling all the playing dots
+// can be constructed with dot-Objects via parameter
+// or filled with addDot
+function videosoundmachine() {
 
+	this.speed = 250;
+	this.num_videos = 5;
+	this.playing = false;
 
-//
-//
-// THE MACHINE
-//
-//
-$("#playercontrol").bind('click',function(event) {
-	isplaying = !isplaying;
-	if (isplaying) {
-		// start machine
+	// constructor
+	// fill the new Array() with all dot-Objects from the parameter
+	this.dots = new Array(arguments.length);
+	for(i=0;i<arguments.length;i++) {
+		this.dots[i] = arguments[i];
+	}
+	
+	// push a new dot into the dots array
+	this.addDot = new Function("dot", "this.dots.push(dot)");
+	
+	// start the machine!
+	this.play = function() {
+
+		this.playing = true;
+		log("-------machine-kicked------");
 		$("#playercontrol").toggleClass("greenPulsate");
-		log("start");
-
-		$("#videolayer").show();
 		
+		$("#videolayer").show();
+
 		// Start a polling loop with an id of 'beat' and a counter.
 		var i = 0;
-		$.doTimeout( 'beat', beat, function(){
+		$.doTimeout( 'beat', this.speed, function(){
 
 			// stop all running videos
 			$("video").each(function() {
@@ -130,14 +112,11 @@ $("#playercontrol").bind('click',function(event) {
 
 			$(".trigger").removeClass("playing");
 		
-			// how many triggers are there?
-			var trigger_count = $(".trigger").length;
-		
 			// find trigger
 			trigger = $(".trigger:eq("+i+")");
 			trigger.toggleClass("playing");
+
 			// find video according to trigger
-			
 			video = $("."+trigger.attr("rel"));
 			aim = $("video."+trigger.attr("rel"));
 			log("now playing: "+trigger.attr("rel"));
@@ -146,37 +125,120 @@ $("#playercontrol").bind('click',function(event) {
 			video.show();
 			video[0].currentTime = 0;
 			video[0].play();
-//			video.addEventListener('loadedmetadata', function() {
-//				this.currentTime = 0;
-//				this.play();
-//			}, false);
-			
-			
+
 			++i;
-			if (i >= trigger_count) {
+			if (i >= vsm.dots.length)
 				i = 0;
-			}
 			return true;
 		});
+	}
 		
-		
-		
-	} else {
-		// stop machine
+	// stop it!
+	this.stop = function() {
+	
+		this.playing = false;
+		log("-------machine-stopped------");
 		$("#playercontrol").toggleClass("greenPulsate");
-
-		// Cancel the polling loop with id of 'beat'.
+		// Cancel the polling loop with id of 'beat'
 		$.doTimeout( 'beat' );
 
 		// stop all running videos
 		$("video").each(function() {
 			video = document.querySelector('.'+$(this).attr("class"));
-//			$(this).hide();
 			video.pause();
 		});
 		$(".trigger").removeClass("playing");
 		$("#videolayer").hide();
 		
-		log("-----------ende-----------");
+	}
+	
+	// beat down
+	this.beat_down = function() {
+		if ((this.speed-100) > 0) {
+			this.speed = this.speed-100;
+			$("#beat_speed").text(this.speed);
+			log("new beat: "+this.speed);
+		}
+	}
+	
+	// beat up
+	this.beat_up = function() {
+		this.speed = this.speed+100;
+		$("#beat_speed").text(this.speed);
+		log("new beat: "+this.speed);
+	}
+
+}
+
+// my canvasobject
+function canvastool() {
+	// get canvas
+	var b_canvas = document.getElementById("canvas");
+	var context = b_canvas.getContext("2d"); 
+
+		
+	this.draw = function(x,y) {
+		// clear canvas
+		b_canvas.width = b_canvas.width;
+
+		context.strokeStyle = "#abc";
+		context.lineWidth = "2.0";
+		context.lineCap = "round";
+		
+		// go through all dots and connect them
+		for(i=0;i<vsm.dots.length;i++) {
+			// re-calc dot-position from absolute to relative
+			dotpos_x = vsm.dots[i].position.x - $("#canvas").offset().left;
+			dotpos_y = vsm.dots[i].position.y - $("#canvas").offset().top;
+			log("dot[i].position.x: "+vsm.dots[i].position.x);
+			
+//			if (i==0)
+				context.moveTo(0,0);
+//			else
+				context.lineTo(vsm.dots[i].position.x,vsm.dots[i].position.y);
+			log("line to: "+vsm.dots[i].position.x+","+dotpos_y)
+		}
+		
+		context.stroke();
+	}
+}
+
+//
+//
+// TIMELINE
+//
+//
+$("#canvas").click(function(e){
+	// only if clicked NOT on dot element
+	if (!$(e.target).is(".trigger")) {
+	
+		// add a new dot below mouseclick
+		vsm.addDot(new dot(e.pageX,e.pageY));
 	}
 });
+
+
+
+
+//
+//
+// THE CONTROLLER
+//
+//
+$("#beat_speed").text(vsm.speed);
+
+$("#playercontrol").click(function(e) {
+	if (vsm.playing)
+		vsm.stop();
+	else
+		vsm.play();
+});
+
+$("#beat_up").click(function(){
+	vsm.beat_up();
+});
+
+$("#beat_down").click(function(){
+	vsm.beat_down();
+});
+

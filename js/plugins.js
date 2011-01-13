@@ -26,8 +26,6 @@ window.log = function(){
   }
 };
 
-
-
 // catch all document.write() calls
 (function(doc){
   var write = doc.write;
